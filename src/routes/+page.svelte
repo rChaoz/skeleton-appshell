@@ -14,7 +14,7 @@
         </div>
     </AppShell.Header>
 
-    <AppShell.Footer class="text-primary-contrast-900-100 bg-primary-900-100/85 p-1 text-sm text-center backdrop-blur-sm" hideOnScroll>
+    <AppShell.Footer class="text-primary-contrast-900-100 bg-primary-900-100/85 p-1 text-sm text-center backdrop-blur-sm">
         <strong>Alert:</strong>
         This is the page footer. I made it tiny since it's sticky, it's not recommended to be used, but it exists to cover use-cases.
     </AppShell.Footer>
@@ -28,7 +28,7 @@
         </div>
     </AppShell.Sidebar>
 
-    <AppShell.Sidebar class="py-8 px-16 space-y-3 max-md:hidden" position="right" sticky>
+    <AppShell.Sidebar class="py-8 px-16 space-y-3 max-md:hidden" position="right" sticky="header">
         <div class="font-bold">On this page</div>
         <ul class="space-y-2">
             {#each { length: 10 }, i}

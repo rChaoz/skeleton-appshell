@@ -6,12 +6,12 @@
     const { children, class: classes, ...rest }: Props = $props();
 </script>
 
-<div id="page" {...rest} class={['grow', classes]}>
+<div id="appShell-page" {...rest} class={['grow', classes]}>
     {@render children?.()}
 </div>
 
 <style>
-    #page {
+    #appShell-page {
         grid-area: page;
     }
 </style>
