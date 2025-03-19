@@ -1,16 +1,23 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte';
+    import type { HTMLAttributes } from 'svelte/elements';
 
-    interface Props {
-        children?: Snippet;
-    }
+    interface Props extends HTMLAttributes<HTMLDivElement> {}
 
-    const { children }: Props = $props();
+    const { children, class: classes, ...rest }: Props = $props();
 </script>
 
-{@render children?.()}
+<div id="appShell" {...rest} class={[classes]}>
+    {@render children?.()}
+</div>
 
 <style>
     :global(body, html) {
+        min-height: 100%;
+    }
+
+    #appShell {
+        display: grid;
+        grid-template-areas: 'header header header' 'sidebar-left page sidebar-right' 'footer footer footer';
+        grid-template-columns: auto 1fr auto;
     }
 </style>

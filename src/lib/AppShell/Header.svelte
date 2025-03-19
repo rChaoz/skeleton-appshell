@@ -80,6 +80,7 @@
 </script>
 
 <header
+    id="appShell-header"
     bind:this={element}
     bind:offsetHeight={headerHeight}
     {...rest}
@@ -92,3 +93,9 @@
 >
     {@render children?.()}
 </header>
+
+<style>
+    #appShell-header {
+        grid-area: header;
+    }
+</style>

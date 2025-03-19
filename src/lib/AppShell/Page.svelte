@@ -9,3 +9,9 @@
 <div id="page" {...rest} class={['grow', classes]}>
     {@render children?.()}
 </div>
+
+<style>
+    #page {
+        grid-area: page;
+    }
+</style>

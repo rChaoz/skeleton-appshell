@@ -7,11 +7,17 @@
          * @default true
          */
         sticky?: boolean;
+        /**
+         * Sidebar position.
+         */
+        position: 'left' | 'right';
     }
 
-    const { children, class: classes, sticky = false, ...rest }: Props = $props();
+    const { children, class: classes, sticky = false, position, ...rest }: Props = $props();
 </script>
 
-<aside {...rest} class={[sticky && 'sticky top-0 h-full', classes]}>
-    {@render children?.()}
-</aside>
+<div style:grid-area="sidebar-{position}">
+    <aside {...rest} class={[sticky && 'sticky top-0 h-full', classes]}>
+        {@render children?.()}
+    </aside>
+</div>
