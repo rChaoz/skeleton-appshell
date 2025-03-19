@@ -7,6 +7,6 @@
     const { children, class: classes, ...rest }: Props = $props()
 </script>
 
-<footer {...rest} class={[classes]}>
+<div id="page" {...rest} class={["grow", classes]}>
     {@render children?.()}
-</footer>
+</div>

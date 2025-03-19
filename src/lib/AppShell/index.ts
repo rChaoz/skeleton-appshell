@@ -1,6 +1,7 @@
 import AppShell from "./AppShell.svelte"
 import Header from "./Header.svelte"
-import Main from "./Main.svelte"
-import Footer from "./Footer.svelte"
+import Page from "./Page.svelte"
+//import Footer from "./Footer.svelte"
+import Sidebar from "./Sidebar.svelte"
 
-export default Object.assign(AppShell, { Header, Main, Footer })
+export default Object.assign(AppShell, { Header, Page, /*Footer,*/ Sidebar })
