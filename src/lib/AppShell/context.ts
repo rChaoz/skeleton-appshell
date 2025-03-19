@@ -1,3 +1,5 @@
+export const appShellContextKey = 'appShell';
+
 export interface AppShellContext {
     scrollTop: number;
     scrollBottom: number;

@@ -2,7 +2,7 @@
     import type { HTMLAttributes } from 'svelte/elements';
     import { onMount, setContext } from 'svelte';
     import { MediaQuery } from 'svelte/reactivity';
-    import type { AppShellContext } from '$lib/AppShell/context';
+    import { type AppShellContext, appShellContextKey } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         /**
@@ -33,7 +33,7 @@
         headerHeight: 0,
         footerHeight: 0
     });
-    setContext('appShell', context);
+    setContext(appShellContextKey, context);
 
     // Auto-hide logic
     let lastScrollTop = 0;

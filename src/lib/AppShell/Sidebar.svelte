@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
     import { getContext } from 'svelte';
-    import type { AppShellContext } from '$lib/AppShell/context';
+    import { type AppShellContext, appShellContextKey } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLElement> {
         /**
@@ -23,7 +23,7 @@
     const { children, class: classes, sticky = false, position, ...rest }: Props = $props();
 
     // Contexts
-    const context = getContext<AppShellContext>('appShell');
+    const context = getContext<AppShellContext>(appShellContextKey);
 </script>
 
 <div style:grid-area="sidebar-{position}">

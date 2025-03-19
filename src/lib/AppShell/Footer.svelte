@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
     import { getContext, onMount } from 'svelte';
-    import type { AppShellContext } from '$lib/AppShell/context';
+    import { type AppShellContext, appShellContextKey } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLElement> {
         /**
@@ -25,7 +25,7 @@
     const { children, class: classes, sticky = true, hideOnScroll = false, ...rest }: Props = $props();
 
     // Contexts
-    const context = getContext<AppShellContext>('appShell');
+    const context = getContext<AppShellContext>(appShellContextKey);
 
     // Remove contexts/styles set by this component on unmount
     onMount(() => () => {

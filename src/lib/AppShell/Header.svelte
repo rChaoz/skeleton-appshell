@@ -1,7 +1,7 @@
 <script lang="ts">
     import { getContext, onMount } from 'svelte';
     import type { HTMLAttributes } from 'svelte/elements';
-    import type { AppShellContext } from '$lib/AppShell/context';
+    import { type AppShellContext, appShellContextKey } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLElement> {
         /**
@@ -35,7 +35,7 @@
     }: Props = $props();
 
     // Contexts
-    const context = getContext<AppShellContext>('appShell');
+    const context = getContext<AppShellContext>(appShellContextKey);
 
     // Scroll padding logic
     $effect(() => {
