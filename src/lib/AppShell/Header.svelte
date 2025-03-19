@@ -1,13 +1,12 @@
 <script lang="ts">
-    import { getContext, onDestroy, onMount } from 'svelte';
+    import { getContext, onMount } from 'svelte';
     import type { HTMLAttributes } from 'svelte/elements';
-    import { MediaQuery } from 'svelte/reactivity';
 
     interface Props extends HTMLAttributes<HTMLElement> {
         /**
          * If non-null, the `scroll-padding-top` CSS property of the root (`<html>` element will be set to this value,
-         * with `{headerHeight}` replaced with the height of the header, in pixels.
-         * @default calc({headerHeight}px + 1rem)
+         * with `{height}` replaced with the height of the header, in pixels.
+         * @default calc({height}px + 1rem)
          */
         scrollPadding?: string | null;
         /**
@@ -16,81 +15,52 @@
          */
         sticky?: boolean;
         /**
-         * Hide this header on mobile (narrow screens, as set by {@linkcode hideOnScrollQuery}) when scrolling down, and show it when scrolling up.
-         * Usually used when the header is an AppBar. Only applies when `stickyHeader` is true.
+         * Hide this header on mobile (narrow screens, as set by {@linkcode hideOnScrollQuery} on the parent `AppShell`)
+         * when scrolling down, and show it when scrolling up.
+         *
+         * Usually used when the header is an AppBar. Only applies when `sticky` is true.
          * @default false
          */
         hideOnScroll?: boolean;
-        /**
-         * Media query that controls when {@linkplain hideOnScroll} applies.
-         * @default max-width: 800px
-         */
-        hideOnScrollQuery?: string;
     }
 
     const {
         children,
         class: classes,
-        scrollPadding = 'calc({headerHeight}px + 1rem)',
+        scrollPadding = 'calc({height}px + 1rem)',
         sticky = true,
         hideOnScroll = false,
-        hideOnScrollQuery = 'max-width: 600px',
         ...rest
     }: Props = $props();
 
     // Contexts
     const headerHeight = getContext<{ current: number }>('appShell-headerHeight');
-    onDestroy(() => (headerHeight.current = 0));
+    const shouldHide = getContext<{ current: boolean }>('appShell-shouldHideHeaderFooter');
 
     // Scroll padding logic
     $effect(() => {
-        if (sticky && element && scrollPadding != null)
-            document.documentElement.style.scrollPaddingTop = scrollPadding.replace('{headerHeight}', String(headerHeight.current));
+        if (sticky && scrollPadding != null)
+            document.documentElement.style.scrollPaddingTop = scrollPadding.replace('{height}', String(headerHeight.current));
         else document.documentElement.style.scrollPaddingTop = '';
     });
 
-    // Auto-hide logic
-    const smallScreen = $derived(new MediaQuery(hideOnScrollQuery));
-    let element = $state<HTMLElement>();
-    let shouldHide = $state(false);
-    let lastScrollTop = 0;
-
-    function onRootScroll() {
-        const scrollTop = document.documentElement.scrollTop;
-        // Can't hide the header if document is not scrolled enough to have content in place of the header
-        if (element && scrollTop < element.offsetHeight) {
-            shouldHide = false;
-            lastScrollTop = scrollTop;
-            return;
-        }
-
-        // Show/hide header after 50px of scrolling in respective direction
-        const delta = scrollTop - lastScrollTop;
-        if (!shouldHide && delta > 0) {
-            if (delta > 100) shouldHide = true;
-            else return;
-        } else if (shouldHide && delta < 0) {
-            if (delta < -100) shouldHide = false;
-            else return;
-        }
-        lastScrollTop = scrollTop;
-    }
-
-    onMount(() => {
-        document.addEventListener('scroll', onRootScroll, { passive: true });
-        return () => document.removeEventListener('scroll', onRootScroll);
+    // Remove contexts/styles set by this component on unmount
+    // So, for example, header is in an {#if} block, the scroll padding is correctly removed when the header is removed
+    // Use onMount return instead of onDestroy as onDestroy runs during SSR
+    onMount(() => () => {
+        headerHeight.current = 0;
+        document.documentElement.style.scrollPaddingTop = '';
     });
 </script>
 
 <header
     id="appShell-header"
-    bind:this={element}
     bind:offsetHeight={headerHeight.current}
     {...rest}
     class={[
         sticky && 'sticky top-0',
         sticky && hideOnScroll && 'transition-[translate] duration-300',
-        sticky && hideOnScroll && shouldHide && smallScreen.current && '-translate-y-full ',
+        sticky && hideOnScroll && shouldHide.current && '-translate-y-full',
         classes
     ]}
 >

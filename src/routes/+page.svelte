@@ -19,7 +19,7 @@
         This is the page footer. I made it tiny since it's sticky, it's not recommended to be used, but it exists to cover use-cases.
     </AppShell.Footer>
 
-    <AppShell.Sidebar class="p-8 space-y-10" position="left">
+    <AppShell.Sidebar class="p-8 space-y-10 max-md:hidden" position="left">
         <div class="font-bold text-lg">Non-sticky sidebar</div>
         <div class="flex flex-col items-center gap-0.5">
             {#each { length: 10 }, i}
@@ -28,7 +28,7 @@
         </div>
     </AppShell.Sidebar>
 
-    <AppShell.Sidebar class="py-8 px-16 space-y-3" position="right" sticky>
+    <AppShell.Sidebar class="py-8 px-16 space-y-3 max-sm:hidden" position="right" sticky>
         <div class="font-bold">On this page</div>
         <ul class="space-y-2">
             {#each { length: 10 }, i}
