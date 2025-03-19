@@ -34,6 +34,7 @@
     $effect(() => {
         if (sticky && element && scrollPadding != null)
             document.documentElement.style.scrollPaddingTop = scrollPadding.replace("{headerHeight}", String(headerHeight))
+        else document.documentElement.style.scrollPaddingTop = ""
     })
 
     // Auto-hide logic
@@ -70,7 +71,11 @@
     })
 </script>
 
-<header bind:this={element} {...rest} class={[
+<header
+    bind:this={element}
+    bind:offsetHeight={headerHeight}
+    {...rest}
+    class={[
         sticky && "sticky top-0",
         sticky && hideOnScroll && "transition-[translate] duration-300",
         sticky && hideOnScroll && shouldHide && smallScreen.current && "-translate-y-full ",
