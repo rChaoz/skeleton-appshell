@@ -1,0 +1,2 @@
+[*.{ts,js,cjs,mjs,tsx,jsx,svelte,html,css,pcss,postcss}]
+indent_size = 4

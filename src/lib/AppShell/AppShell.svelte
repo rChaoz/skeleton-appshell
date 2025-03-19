@@ -1,11 +1,16 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
+    import type { Snippet } from 'svelte';
 
     interface Props {
-        children?: Snippet
+        children?: Snippet;
     }
 
-    const { children }: Props = $props()
+    const { children }: Props = $props();
 </script>
 
 {@render children?.()}
+
+<style>
+    :global(body, html) {
+    }
+</style>
