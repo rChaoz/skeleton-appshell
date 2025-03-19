@@ -1,6 +1,7 @@
 <script lang="ts">
     import { getContext, onMount } from 'svelte';
     import type { HTMLAttributes } from 'svelte/elements';
+    import type { AppShellContext } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLElement> {
         /**
@@ -34,13 +35,12 @@
     }: Props = $props();
 
     // Contexts
-    const headerHeight = getContext<{ current: number }>('appShell-headerHeight');
-    const shouldHide = getContext<{ current: boolean }>('appShell-shouldHideHeaderFooter');
+    const context = getContext<AppShellContext>('appShell');
 
     // Scroll padding logic
     $effect(() => {
         if (sticky && scrollPadding != null)
-            document.documentElement.style.scrollPaddingTop = scrollPadding.replace('{height}', String(headerHeight.current));
+            document.documentElement.style.scrollPaddingTop = scrollPadding.replace('{height}', String(context.headerHeight));
         else document.documentElement.style.scrollPaddingTop = '';
     });
 
@@ -48,19 +48,19 @@
     // So, for example, header is in an {#if} block, the scroll padding is correctly removed when the header is removed
     // Use onMount return instead of onDestroy as onDestroy runs during SSR
     onMount(() => () => {
-        headerHeight.current = 0;
+        context.headerHeight = 0;
         document.documentElement.style.scrollPaddingTop = '';
     });
 </script>
 
 <header
     id="appShell-header"
-    bind:offsetHeight={headerHeight.current}
+    bind:offsetHeight={context.headerHeight}
     {...rest}
     class={[
         sticky && 'sticky top-0',
         sticky && hideOnScroll && 'transition-[translate] duration-300',
-        sticky && hideOnScroll && shouldHide.current && '-translate-y-full',
+        sticky && hideOnScroll && context.shouldHideHeader && '-translate-y-full',
         classes
     ]}
 >
@@ -68,7 +68,7 @@
 </header>
 
 <style>
-    #appShell-header {
+    header {
         grid-area: header;
     }
 </style>

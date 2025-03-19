@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
-    import { getContext } from 'svelte';
+    import { getContext, onMount } from 'svelte';
+    import type { AppShellContext } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLElement> {
         /**
@@ -24,16 +25,22 @@
     const { children, class: classes, sticky = true, hideOnScroll = false, ...rest }: Props = $props();
 
     // Contexts
-    const shouldHide = getContext<{ current: boolean }>('appShell-shouldHideHeaderFooter');
+    const context = getContext<AppShellContext>('appShell');
+
+    // Remove contexts/styles set by this component on unmount
+    onMount(() => () => {
+        context.footerHeight = 0;
+    });
 </script>
 
 <footer
     id="appShell-footer"
+    bind:offsetHeight={context.footerHeight}
     {...rest}
     class={[
         sticky && 'sticky bottom-0',
         sticky && hideOnScroll && 'transition-[translate] duration-300',
-        sticky && hideOnScroll && shouldHide.current && '-translate-y-full',
+        sticky && hideOnScroll && context.shouldHideFooter && 'translate-y-full',
         classes
     ]}
 >
@@ -41,7 +48,7 @@
 </footer>
 
 <style>
-    #appShell-footer {
+    footer {
         grid-area: footer;
     }
 </style>

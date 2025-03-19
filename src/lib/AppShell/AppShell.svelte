@@ -2,6 +2,7 @@
     import type { HTMLAttributes } from 'svelte/elements';
     import { onMount, setContext } from 'svelte';
     import { MediaQuery } from 'svelte/reactivity';
+    import type { AppShellContext } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLDivElement> {
         /**
@@ -13,32 +14,37 @@
 
     const { children, class: classes, hideOnScrollQuery = 'max-width: 600px', ...rest }: Props = $props();
 
-    // Header height context - set by Header and used by Sidebars to set top for sticky scrolling
-    // SSR-friendly as if the page is not scrolled, the sidebars will still be placed correctly regardless of this
-    const headerHeight = $state({ current: 0 });
-    setContext('appShell-headerHeight', headerHeight);
+    // Contexts
+    let shouldHide = $state(false);
+    let canHideHeader = $state(false);
+    let canHideFooter = $state(false);
+    const smallScreen = $derived(new MediaQuery(hideOnScrollQuery));
+    const shouldHideHeader = $derived(shouldHide && canHideHeader && smallScreen.current);
+    const shouldHideFooter = $derived(shouldHide && canHideFooter && smallScreen.current);
+    const context = $state<AppShellContext>({
+        scrollTop: 0,
+        scrollBottom: 0,
+        get shouldHideHeader() {
+            return shouldHideHeader;
+        },
+        get shouldHideFooter() {
+            return shouldHideFooter;
+        },
+        headerHeight: 0,
+        footerHeight: 0
+    });
+    setContext('appShell', context);
 
     // Auto-hide logic
-    let shouldHide = $state(false);
-    const smallScreen = $derived(new MediaQuery(hideOnScrollQuery));
-    const shouldHideHeaderFooter = $derived(shouldHide && smallScreen.current);
-    setContext('appShell-shouldHideHeaderFooter', {
-        get() {
-            return shouldHideHeaderFooter;
-        }
-    });
-
     let lastScrollTop = 0;
 
-    function onRootScroll() {
+    function onDocumentScroll() {
         const scrollTop = document.documentElement.scrollTop;
-        const header = document.getElementById('appShell-header');
-        // Can't hide the header if document is not scrolled enough to have content in place of the header
-        if (header && scrollTop < header.offsetHeight) {
-            shouldHide = false;
-            lastScrollTop = scrollTop;
-            return;
-        }
+        const scrollBottom = document.documentElement.scrollHeight - document.documentElement.clientHeight - scrollTop;
+
+        // Can't hide the header if there is no content to replace the hiding header/footer
+        canHideHeader = scrollTop > context.headerHeight + 50;
+        canHideFooter = scrollBottom > context.footerHeight + 50;
 
         // Show/hide header after 50px of scrolling in respective direction
         const delta = scrollTop - lastScrollTop;
@@ -50,15 +56,17 @@
             else return;
         }
         lastScrollTop = scrollTop;
+
+        console.log({ shouldHide, scrollTop, scrollBottom });
     }
 
     onMount(() => {
-        document.addEventListener('scroll', onRootScroll, { passive: true });
-        return () => document.removeEventListener('scroll', onRootScroll);
+        document.addEventListener('scroll', onDocumentScroll, { passive: true });
+        return () => document.removeEventListener('scroll', onDocumentScroll);
     });
 </script>
 
-<div id="appShell" {...rest} class={[classes]}>
+<div id="appShell" {...rest} class={['overflow-clip', classes]}>
     {@render children?.()}
 </div>
 

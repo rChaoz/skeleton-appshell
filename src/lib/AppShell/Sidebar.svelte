@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
     import { getContext } from 'svelte';
+    import type { AppShellContext } from '$lib/AppShell/context';
 
     interface Props extends HTMLAttributes<HTMLElement> {
         /**
@@ -17,11 +18,11 @@
     const { children, class: classes, sticky = false, position, ...rest }: Props = $props();
 
     // Contexts
-    const headerHeight = getContext<{ current: number }>('appShell-headerHeight');
+    const context = getContext<AppShellContext>('appShell');
 </script>
 
 <div style:grid-area="sidebar-{position}">
-    <aside {...rest} class={[sticky && 'sticky', classes]} style:top={headerHeight.current + 'px'}>
+    <aside {...rest} class={[sticky && 'sticky', classes]} style:top={context.headerHeight + 'px'}>
         {@render children?.()}
     </aside>
 </div>
