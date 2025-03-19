@@ -19,8 +19,26 @@
         This is the page footer. I made it tiny since it's sticky, it's not recommended to be used, but it exists to cover use-cases.
     </AppShell.Footer>
 
+    <AppShell.Sidebar class="p-8 space-y-10" position="left">
+        <div class="font-bold text-lg">Non-sticky sidebar</div>
+        <div class="flex flex-col items-center gap-0.5">
+            {#each { length: 10 }, i}
+                <div class="preset-tonal hover:preset-tonal-primary size-32 grid place-items-center">(icon)</div>
+            {/each}
+        </div>
+    </AppShell.Sidebar>
+
+    <AppShell.Sidebar class="py-8 px-16 space-y-3" position="right" sticky>
+        <div class="font-bold">On this page</div>
+        <ul class="space-y-2">
+            {#each { length: 10 }, i}
+                <li><a href="#heading-{i}" class="anchor">Go to heading {i}</a></li>
+            {/each}
+        </ul>
+    </AppShell.Sidebar>
+
     <AppShell.Page class="space-y-4">
-        <header class="bg-linear-to-b from-secondary-50-950/50 to-transparent">
+        <header class="preset-tonal">
             <div class="container mx-auto p-8 space-y-6">
                 <h1 class="h1">Skeleton App Shell</h1>
                 <p class="text-surface-700-300">This is the page header.</p>
@@ -37,7 +55,7 @@
                 </p>
             {/each}
         </main>
-        <footer class="mt-8 preset-tonal text-center text-sm opacity-70">
+        <footer class="mt-8 bg-surface-950-50/5 text-surface-contrast-50-950/60 text-center text-sm">
             <div class="container mx-auto px-8 py-12 space-y-4">
                 <p>This is the page footer.</p>
                 <p>© 2077 Maybe some copyright reserved, maybe not.</p>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { getContext, onDestroy, onMount } from 'svelte';
     import type { HTMLAttributes } from 'svelte/elements';
     import { MediaQuery } from 'svelte/reactivity';
 
@@ -38,10 +38,14 @@
         ...rest
     }: Props = $props();
 
+    // Contexts
+    const headerHeight = getContext<{ current: number }>('appShell-headerHeight');
+    onDestroy(() => (headerHeight.current = 0));
+
     // Scroll padding logic
     $effect(() => {
         if (sticky && element && scrollPadding != null)
-            document.documentElement.style.scrollPaddingTop = scrollPadding.replace('{headerHeight}', String(headerHeight));
+            document.documentElement.style.scrollPaddingTop = scrollPadding.replace('{headerHeight}', String(headerHeight.current));
         else document.documentElement.style.scrollPaddingTop = '';
     });
 
@@ -49,7 +53,6 @@
     const smallScreen = $derived(new MediaQuery(hideOnScrollQuery));
     let element = $state<HTMLElement>();
     let shouldHide = $state(false);
-    let headerHeight = $state(0);
     let lastScrollTop = 0;
 
     function onRootScroll() {
@@ -82,7 +85,7 @@
 <header
     id="appShell-header"
     bind:this={element}
-    bind:offsetHeight={headerHeight}
+    bind:offsetHeight={headerHeight.current}
     {...rest}
     class={[
         sticky && 'sticky top-0',

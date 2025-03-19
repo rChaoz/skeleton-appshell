@@ -1,9 +1,14 @@
 <script lang="ts">
     import type { HTMLAttributes } from 'svelte/elements';
+    import { setContext } from 'svelte';
 
     interface Props extends HTMLAttributes<HTMLDivElement> {}
 
     const { children, class: classes, ...rest }: Props = $props();
+
+    // Contexts
+    const headerHeight = $state({ current: 0 });
+    setContext('appShell-headerHeight', headerHeight);
 </script>
 
 <div id="appShell" {...rest} class={[classes]}>
